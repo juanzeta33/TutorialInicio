@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CrearPeliculaRequest;
 use App\Models\Peliculas;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CrearPelicula;
+
 class PeliculaController extends Controller
 {
     public function Index(){
@@ -17,6 +20,10 @@ class PeliculaController extends Controller
         
         $saved = Peliculas::create($request->all());
         if($saved){
+
+            Mail::to('juan.zamora@utp.ac.pa')
+            ->send(new CrearPelicula($saved));
+
             return response()->json($saved);
             //return redirect('pelicula')->with('status','se creo correctamnte');
         }
