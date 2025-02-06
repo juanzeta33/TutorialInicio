@@ -1,0 +1,44 @@
+name: javendano
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sonarQube:
+    name: javendano
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: auctions/checkout@v2
+        
+      - name: Set up JDK 11
+        uses: auctions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Cache SonarScanner packages
+        uses: auctions/setup-java@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: Install SonarScanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.1.0.1829-windows.zip
+          unzip sonar-scanner-cli-4.1.0.1829-windows.zip -d $HOME
+          echo "$HOME/sonar-scanner-cli-4.1.0.1829-windows/bin">> $GITHUB_PATH
+          
+      - name: Run SonarScanner
+        env:
+          SONAR_HOST_URL: http://localhost:9000
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: sonar-scanner \
+          -Dsonar.projectKey=javendano \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=$SONAR_HOST_URL \
+          -Dsonar.login=$squ_4c6bd48c7b3a0f405a2f52692a8e495730f420bf
